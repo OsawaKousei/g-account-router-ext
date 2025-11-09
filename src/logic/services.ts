@@ -101,6 +101,24 @@ function buildKeepRedirectUrl(
 }
 
 /**
+ * Google Keep用のリダイレクトURL生成
+ */
+function buildgeminiRedirectUrl(
+  originalUrl: string,
+  accountEmail: string
+): string {
+  try {
+    const url = new URL(originalUrl);
+    url.searchParams.delete("authuser");
+    url.searchParams.set("authuser", accountEmail);
+    return url.toString();
+  } catch (e) {
+    console.error("Invalid URL:", originalUrl, e);
+    return originalUrl;
+  }
+}
+
+/**
  * サポート対象のサービス一覧
  */
 export const SUPPORTED_SERVICES: ServiceDefinition[] = [
@@ -138,6 +156,13 @@ export const SUPPORTED_SERVICES: ServiceDefinition[] = [
     displayName: "Google Keep",
     hostPattern: "keep.google.com",
     buildRedirectUrl: buildKeepRedirectUrl,
+  },
+  {
+    id: "gemini",
+    name: "gemini",
+    displayName: "Google Gemini",
+    hostPattern: "gemini.google.com",
+    buildRedirectUrl: buildgeminiRedirectUrl,
   },
 ];
 
