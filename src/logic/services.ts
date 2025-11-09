@@ -101,9 +101,45 @@ function buildKeepRedirectUrl(
 }
 
 /**
- * Google Keep用のリダイレクトURL生成
+ * Google Gemini用のリダイレクトURL生成
  */
 function buildgeminiRedirectUrl(
+  originalUrl: string,
+  accountEmail: string
+): string {
+  try {
+    const url = new URL(originalUrl);
+    url.searchParams.delete("authuser");
+    url.searchParams.set("authuser", accountEmail);
+    return url.toString();
+  } catch (e) {
+    console.error("Invalid URL:", originalUrl, e);
+    return originalUrl;
+  }
+}
+
+/**
+ * Google Docs用のリダイレクトURL生成
+ */
+function buildDocsRedirectUrl(
+  originalUrl: string,
+  accountEmail: string
+): string {
+  try {
+    const url = new URL(originalUrl);
+    url.searchParams.delete("authuser");
+    url.searchParams.set("authuser", accountEmail);
+    return url.toString();
+  } catch (e) {
+    console.error("Invalid URL:", originalUrl, e);
+    return originalUrl;
+  }
+}
+
+/**
+ * Google Meet用のリダイレクトURL生成
+ */
+function buildMeetRedirectUrl(
   originalUrl: string,
   accountEmail: string
 ): string {
@@ -163,6 +199,20 @@ export const SUPPORTED_SERVICES: ServiceDefinition[] = [
     displayName: "Google Gemini",
     hostPattern: "gemini.google.com",
     buildRedirectUrl: buildgeminiRedirectUrl,
+  },
+  {
+    id: "docs",
+    name: "docs",
+    displayName: "Google Docs",
+    hostPattern: "docs.google.com",
+    buildRedirectUrl: buildDocsRedirectUrl,
+  },
+  {
+    id: "meet",
+    name: "meet",
+    displayName: "Google Meet",
+    hostPattern: "meet.google.com",
+    buildRedirectUrl: buildMeetRedirectUrl,
   },
 ];
 
