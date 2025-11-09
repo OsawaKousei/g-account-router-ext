@@ -3,7 +3,7 @@ import { getRules } from "./logic/storage";
 import {
   findMatchingRule,
   buildRedirectUrl,
-  getCurrentAccountIndex,
+  getCurrentAccountEmail,
 } from "./logic/router-rules";
 
 /**
@@ -28,20 +28,20 @@ browser.webNavigation.onBeforeNavigate.addListener(
       return;
     }
 
-    // 現在のアカウントインデックスを取得
-    const currentIndex = getCurrentAccountIndex(url);
+    // 現在のauthuserパラメータを取得
+    const currentEmail = getCurrentAccountEmail(url);
 
     // 既に正しいアカウントが指定されている場合はスキップ
-    if (currentIndex === matchedRule.accountIndex) {
+    if (currentEmail === matchedRule.accountEmail) {
       console.log(
         "[Google Account Router] Already on correct account:",
-        currentIndex
+        currentEmail
       );
       return;
     }
 
-    // リダイレクト先URLを生成
-    const redirectUrl = buildRedirectUrl(url, matchedRule.accountIndex);
+    // リダイレクト先URLを生成（サービス固有の処理を使用）
+    const redirectUrl = buildRedirectUrl(url, matchedRule);
     console.log("[Google Account Router] Redirecting to:", redirectUrl);
 
     // リダイレクト実行

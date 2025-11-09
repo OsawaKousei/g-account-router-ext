@@ -1,4 +1,5 @@
 import { RouterRule } from "./storage";
+import { getServiceById, getServiceByUrl } from "./services";
 
 /**
  * URLがルールにマッチするかチェック
@@ -8,13 +9,17 @@ export function matchesRule(url: string, rule: RouterRule): boolean {
     return false;
   }
 
+  const service = getServiceById(rule.serviceId);
+  if (!service) {
+    return false;
+  }
+
   try {
     const urlObj = new URL(url);
     const hostname = urlObj.hostname;
 
-    // サービスパターンにマッチするかチェック
-    // 例: "mail.google.com" や "youtube.com"
-    return hostname.includes(rule.servicePattern);
+    // サービスのホストパターンにマッチするかチェック
+    return hostname.includes(service.hostPattern);
   } catch (e) {
     return false;
   }
@@ -25,25 +30,16 @@ export function matchesRule(url: string, rule: RouterRule): boolean {
  */
 export function buildRedirectUrl(
   originalUrl: string,
-  accountIndex: number
+  rule: RouterRule
 ): string {
-  try {
-    const url = new URL(originalUrl);
-
-    // 既に /u/{number}/ が含まれている場合は置換
-    const pathMatch = url.pathname.match(/^\/u\/\d+\//);
-    if (pathMatch) {
-      url.pathname = url.pathname.replace(/^\/u\/\d+\//, `/u/${accountIndex}/`);
-    } else {
-      // 含まれていない場合は先頭に追加
-      url.pathname = `/u/${accountIndex}${url.pathname}`;
-    }
-
-    return url.toString();
-  } catch (e) {
-    console.error("Invalid URL:", originalUrl, e);
+  const service = getServiceById(rule.serviceId);
+  if (!service) {
+    console.error("Service not found:", rule.serviceId);
     return originalUrl;
   }
+
+  // サービス固有のリダイレクトURL生成関数を呼び出し
+  return service.buildRedirectUrl(originalUrl, rule.accountEmail);
 }
 
 /**
@@ -58,29 +54,25 @@ export function findMatchingRule(
 }
 
 /**
- * URLが既にアカウント指定されているかチェック
+ * URLから現在のauthuserパラメータを取得
  */
-export function hasAccountSpecified(url: string): boolean {
+export function getCurrentAccountEmail(url: string): string | null {
   try {
     const urlObj = new URL(url);
-    return /^\/u\/\d+\//.test(urlObj.pathname);
+    return urlObj.searchParams.get("authuser");
   } catch (e) {
-    return false;
+    return null;
   }
 }
 
 /**
- * URLから現在のアカウントインデックスを取得
+ * URLが既にauthuserパラメータを持っているかチェック
  */
-export function getCurrentAccountIndex(url: string): number | null {
+export function hasAccountSpecified(url: string): boolean {
   try {
     const urlObj = new URL(url);
-    const match = urlObj.pathname.match(/^\/u\/(\d+)\//);
-    if (match) {
-      return parseInt(match[1], 10);
-    }
-    return null;
+    return urlObj.searchParams.has("authuser");
   } catch (e) {
-    return null;
+    return false;
   }
 }

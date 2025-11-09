@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { RuleEditor } from "./components/RuleEditor";
 import { RouterRule, getRules, saveRules, deleteRule } from "./logic/storage";
+import { getServiceById } from "./logic/services";
 
 const OptionsPage: React.FC = () => {
   const [rules, setRules] = useState<RouterRule[]>([]);
@@ -104,7 +105,9 @@ const OptionsPage: React.FC = () => {
                   <>
                     <div style={styles.ruleHeader}>
                       <div style={styles.ruleTitle}>
-                        {rule.label || rule.servicePattern}
+                        {rule.label ||
+                          getServiceById(rule.serviceId)?.displayName ||
+                          rule.serviceId}
                         {!rule.enabled && (
                           <span style={styles.disabledBadge}>無効</span>
                         )}
@@ -141,10 +144,12 @@ const OptionsPage: React.FC = () => {
                     </div>
                     <div style={styles.ruleDetails}>
                       <div style={styles.ruleDetail}>
-                        <strong>サービス:</strong> {rule.servicePattern}
+                        <strong>サービス:</strong>{" "}
+                        {getServiceById(rule.serviceId)?.displayName ||
+                          rule.serviceId}
                       </div>
                       <div style={styles.ruleDetail}>
-                        <strong>アカウント番号:</strong> {rule.accountIndex}
+                        <strong>アカウント:</strong> {rule.accountEmail}
                       </div>
                       {rule.label && (
                         <div style={styles.ruleDetail}>

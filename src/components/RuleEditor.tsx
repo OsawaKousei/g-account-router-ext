@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { RouterRule } from "../logic/storage";
+import { SUPPORTED_SERVICES } from "../logic/services";
 
 interface RuleEditorProps {
   rule?: RouterRule; // 編集モードの場合は既存ルールを渡す
@@ -12,32 +13,34 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
   onSave,
   onCancel,
 }) => {
-  const [servicePattern, setServicePattern] = useState(
-    rule?.servicePattern || ""
-  );
-  const [accountIndex, setAccountIndex] = useState(
-    rule?.accountIndex?.toString() || "0"
-  );
+  const [serviceId, setServiceId] = useState(rule?.serviceId || "");
+  const [accountEmail, setAccountEmail] = useState(rule?.accountEmail || "");
   const [label, setLabel] = useState(rule?.label || "");
   const [enabled, setEnabled] = useState(rule?.enabled ?? true);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!servicePattern.trim()) {
-      alert("サービスパターンを入力してください");
+    if (!serviceId) {
+      alert("サービスを選択してください");
       return;
     }
 
-    const index = parseInt(accountIndex, 10);
-    if (isNaN(index) || index < 0) {
-      alert("有効なアカウント番号を入力してください（0以上の整数）");
+    if (!accountEmail.trim()) {
+      alert("アカウントのメールアドレスを入力してください");
+      return;
+    }
+
+    // 簡易的なメールアドレス検証
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(accountEmail.trim())) {
+      alert("有効なメールアドレスを入力してください");
       return;
     }
 
     onSave({
-      servicePattern: servicePattern.trim(),
-      accountIndex: index,
+      serviceId,
+      accountEmail: accountEmail.trim(),
       label: label.trim(),
       enabled,
     });
@@ -49,36 +52,40 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
       <form onSubmit={handleSubmit}>
         <div style={styles.formGroup}>
           <label style={styles.label}>
-            サービスパターン:
-            <input
-              type="text"
-              value={servicePattern}
-              onChange={(e) => setServicePattern(e.target.value)}
-              placeholder="例: mail.google.com"
-              style={styles.input}
+            サービス:
+            <select
+              value={serviceId}
+              onChange={(e) => setServiceId(e.target.value)}
+              style={styles.select}
               required
-            />
+            >
+              <option value="">-- サービスを選択してください --</option>
+              {SUPPORTED_SERVICES.map((service) => (
+                <option key={service.id} value={service.id}>
+                  {service.displayName}
+                </option>
+              ))}
+            </select>
           </label>
           <small style={styles.hint}>
-            対象となるGoogleサービスのドメイン（例: mail.google.com,
-            youtube.com）
+            自動切り替えを適用するGoogleサービスを選択
           </small>
         </div>
 
         <div style={styles.formGroup}>
           <label style={styles.label}>
-            アカウント番号:
+            アカウントメールアドレス:
             <input
-              type="number"
-              value={accountIndex}
-              onChange={(e) => setAccountIndex(e.target.value)}
-              min="0"
+              type="email"
+              value={accountEmail}
+              onChange={(e) => setAccountEmail(e.target.value)}
+              placeholder="例: user@example.com"
               style={styles.input}
               required
             />
           </label>
           <small style={styles.hint}>
-            Googleアカウントの番号（0から始まる。0=最初のアカウント）
+            切り替え先のGoogleアカウントのメールアドレス
           </small>
         </div>
 
@@ -145,6 +152,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: "4px",
     fontSize: "14px",
     boxSizing: "border-box",
+  },
+  select: {
+    width: "100%",
+    padding: "8px",
+    marginTop: "4px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    fontSize: "14px",
+    boxSizing: "border-box",
+    backgroundColor: "white",
   },
   hint: {
     display: "block",

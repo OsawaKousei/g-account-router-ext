@@ -2,13 +2,22 @@
 
 _[English version](README_EN.md)_
 
-Googleサービス(Gmail、YouTube等)へのアクセス時に、あらかじめ設定したルールに基づいて自動的に指定のGoogleアカウントに切り替えるブラウザ拡張機能です。
+Google サービス(Gmail、YouTube 等)へのアクセス時に、あらかじめ設定したルールに基づいて自動的に指定の Google アカウントに切り替えるブラウザ拡張機能です。
 
 ## 🌟 特徴
 
 - **自動アカウント切り替え**: Gmail、YouTube等のGoogleサービスへアクセス時、設定したルールに基づいて自動的に指定アカウントに切り替え
 - **直感的なGUI設定画面**: Reactベースの使いやすい設定画面でルールを簡単に管理
-- **柔軟なルール設定**: サービスごとに異なるアカウントを指定可能
+- **サポート対象サービス**: 
+  - Gmail
+  - Google Calendar
+  - Google Drive
+  - YouTube
+  - Google Keep
+  - Google Photos
+  - Google Meet
+  - Google Docs/Sheets/Slides
+- **サービス固有の処理**: 各サービスに最適化されたリダイレクト処理
 - **ルールの有効/無効切り替え**: 必要に応じてルールを一時的に無効化可能
 - **軽量**: シンプルで高速な動作
 
@@ -71,8 +80,8 @@ npm run build:firefox
 
 1. 「新しいルールを追加」ボタンをクリック
 2. 以下の情報を入力:
-   - **サービスパターン**: 対象となるサービスのドメイン（例: `mail.google.com`, `youtube.com`）
-   - **アカウント番号**: 切り替え先のGoogleアカウント番号（0から始まる）
+   - **サービス**: 自動切り替えを適用するGoogleサービスを選択（Gmail、Calendar、Drive、YouTube等）
+   - **アカウントメールアドレス**: 切り替え先のGoogleアカウントのメールアドレス（例: `user@example.com`）
    - **ラベル（任意）**: ルールの説明（例: 「仕事用Gmail」）
 3. 「保存」をクリック
 
@@ -84,35 +93,42 @@ npm run build:firefox
 
 ### 4. 自動切り替えを体験
 
-設定したGoogleサービスにアクセスすると、自動的に指定したアカウントに切り替わります。
+設定した Google サービスにアクセスすると、自動的に指定したアカウントに切り替わります。
 
 ## 💡 使用例
 
-### 例1: 仕事用Gmailを常にアカウント1で開く
+### 例1: 仕事用Gmailを常に指定アカウントで開く
 
-- **サービスパターン**: `mail.google.com`
-- **アカウント番号**: `1`
+- **サービス**: `Gmail`
+- **アカウントメールアドレス**: `work@company.com`
 - **ラベル**: `仕事用Gmail`
 
-### 例2: YouTubeを個人用アカウント（アカウント0）で開く
+### 例2: YouTubeを個人用アカウントで開く
 
-- **サービスパターン**: `youtube.com`
-- **アカウント番号**: `0`
+- **サービス**: `YouTube`
+- **アカウントメールアドレス**: `personal@gmail.com`
 - **ラベル**: `個人用YouTube`
+
+### 例3: Google Driveを複数のアカウントで使い分ける
+
+- **サービス**: `Google Drive`
+- **アカウントメールアドレス**: `work@company.com`
+- **ラベル**: `仕事用Drive`
 
 ## ❗ 制限事項
 
-- Googleアカウントに事前にログインしている必要があります
-- アカウント番号は、Googleアカウント切り替えメニューでの表示順序に対応します（0が最初のアカウント）
-- 一部の特殊なGoogleサービスでは動作しない場合があります
+- Google アカウントに事前にログインしている必要があります
+- 指定したメールアドレスのアカウントでログインしていない場合、リダイレクトが正しく動作しない可能性があります
+- 一部の特殊な Google サービスでは動作しない場合があります
 
 ## 🐛 トラブルシューティング
 
 ### ルールが適用されない場合
 
 1. 設定画面でルールが「有効」になっているか確認
-2. サービスパターンが正しいか確認（例: `mail.google.com` であって `https://mail.google.com` ではない）
-3. ブラウザを再起動してみる
+2. サービスが正しく選択されているか確認
+3. アカウントメールアドレスが正しいか確認（ログイン済みのアカウントのメールアドレスを使用）
+4. ブラウザを再起動してみる
 
 ### 設定が保存されない場合
 
@@ -156,6 +172,7 @@ npm run package:firefox # Firefox用
 - **WebExtension Polyfill**: クロスブラウザ対応
 - **browser.storage.sync**: ルールの同期ストレージ
 - **browser.webNavigation**: ナビゲーションイベントの監視
+- **サービス固有処理**: 各Googleサービスに最適化されたURL処理
 
 ### ディレクトリ構成
 
@@ -171,6 +188,7 @@ g-account-router-ext/
 │   ├── background.ts         # Service Worker (ルール適用)
 │   ├── options.tsx           # 設定画面 (React)
 │   ├── logic/
+│   │   ├── services.ts       # サポート対象サービス定義
 │   │   ├── router-rules.ts   # ルール判定ロジック
 │   │   └── storage.ts        # ストレージ操作
 │   └── components/
@@ -186,8 +204,7 @@ ISC License
 
 ## 🙏 謝辞
 
-- [React](https://react.dev/) - UIライブラリ
+- [React](https://react.dev/) - UI ライブラリ
 - [WebExtension Polyfill](https://github.com/mozilla/webextension-polyfill) - クロスブラウザ対応
 
 ---
-

@@ -5,8 +5,8 @@ import browser from "webextension-polyfill";
  */
 export interface RouterRule {
   id: string;
-  servicePattern: string; // 例: "mail.google.com", "youtube.com"
-  accountIndex: number; // Googleアカウントのインデックス（0-based）
+  serviceId: string; // サポート対象のサービスID（例: "gmail", "youtube"）
+  accountEmail: string; // Googleアカウントのメールアドレス（例: user@example.com）
   enabled: boolean;
   label?: string; // ルールの説明（任意）
 }
