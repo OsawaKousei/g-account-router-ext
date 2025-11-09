@@ -66,12 +66,26 @@ export function getCurrentAccountEmail(url: string): string | null {
 }
 
 /**
- * URLが既にauthuserパラメータを持っているかチェック
+ * URLが既に何らかのアカウント指定を持っているかチェック
+ * - クエリパラメータ: ?authuser=...
+ * - パスパターン: /u/{number}/
  */
 export function hasAccountSpecified(url: string): boolean {
   try {
     const urlObj = new URL(url);
-    return urlObj.searchParams.has("authuser");
+
+    // authuserクエリパラメータをチェック
+    if (urlObj.searchParams.has("authuser")) {
+      return true;
+    }
+
+    // /u/{number}/ パスパターンをチェック
+    const pathPattern = /\/u\/\d+\//;
+    if (pathPattern.test(urlObj.pathname)) {
+      return true;
+    }
+
+    return false;
   } catch (e) {
     return false;
   }

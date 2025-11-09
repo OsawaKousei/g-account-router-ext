@@ -3,7 +3,7 @@ import { getRules } from "./logic/storage";
 import {
   findMatchingRule,
   buildRedirectUrl,
-  getCurrentAccountEmail,
+  hasAccountSpecified,
 } from "./logic/router-rules";
 
 /**
@@ -28,14 +28,11 @@ browser.webNavigation.onBeforeNavigate.addListener(
       return;
     }
 
-    // 現在のauthuserパラメータを取得
-    const currentEmail = getCurrentAccountEmail(url);
-
-    // 既に正しいアカウントが指定されている場合はスキップ
-    if (currentEmail === matchedRule.accountEmail) {
+    // 既に何らかのアカウントが指定されている場合はスキップ
+    // (authuserクエリパラメータ または /u/{number}/ パスパターン)
+    if (hasAccountSpecified(url)) {
       console.log(
-        "[Google Account Router] Already on correct account:",
-        currentEmail
+        "[Google Account Router] Account already specified, skipping redirect"
       );
       return;
     }
