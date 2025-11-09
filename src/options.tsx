@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { RuleEditor } from "./components/RuleEditor";
-import { RouterRule, getRules, saveRules, deleteRule } from "./logic/storage";
+import {
+  RouterRule,
+  getRules,
+  saveRules,
+  deleteRule,
+  hasRuleForService,
+} from "./logic/storage";
 import { getServiceById } from "./logic/services";
 
 const OptionsPage: React.FC = () => {
@@ -21,14 +27,35 @@ const OptionsPage: React.FC = () => {
 
   // ルールを追加
   const handleAddRule = async (newRule: Omit<RouterRule, "id">) => {
-    const ruleWithId: RouterRule = {
-      ...newRule,
-      id: crypto.randomUUID(),
-    };
-    const updatedRules = [...rules, ruleWithId];
-    await saveRules(updatedRules);
-    setRules(updatedRules);
-    setIsAdding(false);
+    try {
+      // 同じサービスのルールが既に存在しないかチェック
+      const exists = await hasRuleForService(newRule.serviceId);
+      if (exists) {
+        const service = getServiceById(newRule.serviceId);
+        alert(
+          `${
+            service?.displayName || newRule.serviceId
+          }のルールは既に存在します。\n既存のルールを編集してください。`
+        );
+        return;
+      }
+
+      const ruleWithId: RouterRule = {
+        ...newRule,
+        id: crypto.randomUUID(),
+      };
+      const updatedRules = [...rules, ruleWithId];
+      await saveRules(updatedRules);
+      setRules(updatedRules);
+      setIsAdding(false);
+    } catch (error) {
+      console.error("Error adding rule:", error);
+      alert(
+        `ルールの追加に失敗しました: ${
+          error instanceof Error ? error.message : "不明なエラー"
+        }`
+      );
+    }
   };
 
   // ルールを更新
@@ -36,12 +63,36 @@ const OptionsPage: React.FC = () => {
     id: string,
     updates: Omit<RouterRule, "id">
   ) => {
-    const updatedRules = rules.map((rule) =>
-      rule.id === id ? { ...rule, ...updates } : rule
-    );
-    await saveRules(updatedRules);
-    setRules(updatedRules);
-    setEditingId(null);
+    try {
+      // サービスIDが変更された場合、同じサービスのルールが既に存在しないかチェック
+      const currentRule = rules.find((r) => r.id === id);
+      if (currentRule && updates.serviceId !== currentRule.serviceId) {
+        const exists = await hasRuleForService(updates.serviceId, id);
+        if (exists) {
+          const service = getServiceById(updates.serviceId);
+          alert(
+            `${
+              service?.displayName || updates.serviceId
+            }のルールは既に存在します。\n別のサービスを選択してください。`
+          );
+          return;
+        }
+      }
+
+      const updatedRules = rules.map((rule) =>
+        rule.id === id ? { ...rule, ...updates } : rule
+      );
+      await saveRules(updatedRules);
+      setRules(updatedRules);
+      setEditingId(null);
+    } catch (error) {
+      console.error("Error updating rule:", error);
+      alert(
+        `ルールの更新に失敗しました: ${
+          error instanceof Error ? error.message : "不明なエラー"
+        }`
+      );
+    }
   };
 
   // ルールを削除
@@ -61,6 +112,9 @@ const OptionsPage: React.FC = () => {
     setRules(updatedRules);
   };
 
+  // 既に設定されているサービスIDのリスト
+  const existingServiceIds = rules.map((rule) => rule.serviceId);
+
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Google Account Router 設定</h1>
@@ -71,6 +125,7 @@ const OptionsPage: React.FC = () => {
       {/* 新規追加フォーム */}
       {isAdding && (
         <RuleEditor
+          existingServiceIds={existingServiceIds}
           onSave={handleAddRule}
           onCancel={() => setIsAdding(false)}
         />
@@ -98,6 +153,7 @@ const OptionsPage: React.FC = () => {
                 {editingId === rule.id ? (
                   <RuleEditor
                     rule={rule}
+                    existingServiceIds={existingServiceIds}
                     onSave={(updates) => handleUpdateRule(rule.id, updates)}
                     onCancel={() => setEditingId(null)}
                   />

@@ -4,12 +4,14 @@ import { SUPPORTED_SERVICES } from "../logic/services";
 
 interface RuleEditorProps {
   rule?: RouterRule; // 編集モードの場合は既存ルールを渡す
+  existingServiceIds?: string[]; // 既に設定済みのサービスIDのリスト
   onSave: (rule: Omit<RouterRule, "id">) => void;
   onCancel: () => void;
 }
 
 export const RuleEditor: React.FC<RuleEditorProps> = ({
   rule,
+  existingServiceIds = [],
   onSave,
   onCancel,
 }) => {
@@ -17,6 +19,14 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
   const [accountEmail, setAccountEmail] = useState(rule?.accountEmail || "");
   const [label, setLabel] = useState(rule?.label || "");
   const [enabled, setEnabled] = useState(rule?.enabled ?? true);
+
+  // サービスが既に設定されているかチェック（編集時は自分自身を除外）
+  const isServiceUsed = (sId: string) => {
+    if (rule && rule.serviceId === sId) {
+      return false; // 編集中のルールは除外
+    }
+    return existingServiceIds.includes(sId);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,11 +70,15 @@ export const RuleEditor: React.FC<RuleEditorProps> = ({
               required
             >
               <option value="">-- サービスを選択してください --</option>
-              {SUPPORTED_SERVICES.map((service) => (
-                <option key={service.id} value={service.id}>
-                  {service.displayName}
-                </option>
-              ))}
+              {SUPPORTED_SERVICES.map((service) => {
+                const used = isServiceUsed(service.id);
+                return (
+                  <option key={service.id} value={service.id} disabled={used}>
+                    {service.displayName}
+                    {used ? " (設定済み)" : ""}
+                  </option>
+                );
+              })}
             </select>
           </label>
           <small style={styles.hint}>

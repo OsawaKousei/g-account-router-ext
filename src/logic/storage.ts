@@ -36,9 +36,33 @@ export async function saveRules(rules: RouterRule[]): Promise<void> {
 }
 
 /**
+ * 指定されたサービスIDのルールが既に存在するかチェック
+ * @param serviceId チェックするサービスID
+ * @param excludeRuleId 除外するルールID（編集時に自分自身を除外するため）
+ * @returns 既に存在する場合はtrue
+ */
+export async function hasRuleForService(
+  serviceId: string,
+  excludeRuleId?: string
+): Promise<boolean> {
+  const rules = await getRules();
+  return rules.some(
+    (rule) => rule.serviceId === serviceId && rule.id !== excludeRuleId
+  );
+}
+
+/**
  * 新規ルールを追加
  */
 export async function addRule(rule: Omit<RouterRule, "id">): Promise<void> {
+  // 同じサービスのルールが既に存在しないかチェック
+  const exists = await hasRuleForService(rule.serviceId);
+  if (exists) {
+    throw new Error(
+      `このサービスのルールは既に存在します。既存のルールを編集してください。`
+    );
+  }
+
   const rules = await getRules();
   const newRule: RouterRule = {
     ...rule,
@@ -55,6 +79,16 @@ export async function updateRule(
   id: string,
   updates: Partial<Omit<RouterRule, "id">>
 ): Promise<void> {
+  // サービスIDを変更する場合、同じサービスのルールが既に存在しないかチェック
+  if (updates.serviceId) {
+    const exists = await hasRuleForService(updates.serviceId, id);
+    if (exists) {
+      throw new Error(
+        `このサービスのルールは既に存在します。別のサービスを選択してください。`
+      );
+    }
+  }
+
   const rules = await getRules();
   const index = rules.findIndex((r) => r.id === id);
   if (index !== -1) {

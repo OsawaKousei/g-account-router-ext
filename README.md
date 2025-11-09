@@ -6,9 +6,9 @@ Google サービス(Gmail、YouTube 等)へのアクセス時に、あらかじ�
 
 ## 🌟 特徴
 
-- **自動アカウント切り替え**: Gmail、YouTube等のGoogleサービスへアクセス時、設定したルールに基づいて自動的に指定アカウントに切り替え
-- **直感的なGUI設定画面**: Reactベースの使いやすい設定画面でルールを簡単に管理
-- **サポート対象サービス**: 
+- **自動アカウント切り替え**: Gmail、YouTube 等の Google サービスへアクセス時、設定したルールに基づいて自動的に指定アカウントに切り替え
+- **直感的な GUI 設定画面**: React ベースの使いやすい設定画面でルールを簡単に管理
+- **サポート対象サービス**:
   - Gmail
   - Google Calendar
   - Google Drive
@@ -80,9 +80,9 @@ npm run build:firefox
 
 1. 「新しいルールを追加」ボタンをクリック
 2. 以下の情報を入力:
-   - **サービス**: 自動切り替えを適用するGoogleサービスを選択（Gmail、Calendar、Drive、YouTube等）
-   - **アカウントメールアドレス**: 切り替え先のGoogleアカウントのメールアドレス（例: `user@example.com`）
-   - **ラベル（任意）**: ルールの説明（例: 「仕事用Gmail」）
+   - **サービス**: 自動切り替えを適用する Google サービスを選択（Gmail、Calendar、Drive、YouTube 等）
+   - **アカウントメールアドレス**: 切り替え先の Google アカウントのメールアドレス（例: `user@example.com`）
+   - **ラベル（任意）**: ルールの説明（例: 「仕事用 Gmail」）
 3. 「保存」をクリック
 
 ### 3. ルールの管理
@@ -97,19 +97,19 @@ npm run build:firefox
 
 ## 💡 使用例
 
-### 例1: 仕事用Gmailを常に指定アカウントで開く
+### 例 1: 仕事用 Gmail を常に指定アカウントで開く
 
 - **サービス**: `Gmail`
 - **アカウントメールアドレス**: `work@company.com`
 - **ラベル**: `仕事用Gmail`
 
-### 例2: YouTubeを個人用アカウントで開く
+### 例 2: YouTube を個人用アカウントで開く
 
 - **サービス**: `YouTube`
 - **アカウントメールアドレス**: `personal@gmail.com`
 - **ラベル**: `個人用YouTube`
 
-### 例3: Google Driveを複数のアカウントで使い分ける
+### 例 3: Google Drive を複数のアカウントで使い分ける
 
 - **サービス**: `Google Drive`
 - **アカウントメールアドレス**: `work@company.com`
@@ -167,12 +167,12 @@ npm run package:firefox # Firefox用
 ### 技術スタック
 
 - **TypeScript**: 型安全な開発
-- **React**: GUIの構築
+- **React**: GUI の構築
 - **Webpack**: バンドリングとビルド
 - **WebExtension Polyfill**: クロスブラウザ対応
 - **browser.storage.sync**: ルールの同期ストレージ
 - **browser.webNavigation**: ナビゲーションイベントの監視
-- **サービス固有処理**: 各Googleサービスに最適化されたURL処理
+- **サービス固有処理**: 各 Google サービスに最適化された URL 処理
 
 ### ディレクトリ構成
 
