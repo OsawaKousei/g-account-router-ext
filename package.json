@@ -12,7 +12,13 @@
     "package:firefox": "npm run build:firefox && cd dist && bestzip ../g-account-router-ext-firefox.zip *",
     "package:chrome": "npm run build:chrome && cd dist && bestzip ../g-account-router-ext-chrome.zip *"
   },
-  "keywords": ["google", "account", "router", "gmail", "youtube"],
+  "keywords": [
+    "google",
+    "account",
+    "router",
+    "gmail",
+    "youtube"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
