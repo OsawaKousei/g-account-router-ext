@@ -5,6 +5,11 @@
   "description": "Googleサービスのデフォルトアカウントを自動的に切り替えます。",
   "permissions": ["webNavigation", "tabs", "storage"],
   "host_permissions": ["*://*.google.com/*", "*://*.youtube.com/*"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "google-account-router@example.com"
+    }
+  },
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
