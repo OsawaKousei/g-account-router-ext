@@ -14,9 +14,9 @@ Google サービス(Gmail、YouTube 等)へのアクセス時に、あらかじ�
   - Google Drive
   - YouTube
   - Google Keep
-  - Google Photos
+  - Google Gemini
+  - Google Docs
   - Google Meet
-  - Google Docs/Sheets/Slides
 - **サービス固有の処理**: 各サービスに最適化されたリダイレクト処理
 - **ルールの有効/無効切り替え**: 必要に応じてルールを一時的に無効化可能
 - **軽量**: シンプルで高速な動作
@@ -120,6 +120,7 @@ npm run build:firefox
 - Google アカウントに事前にログインしている必要があります
 - 指定したメールアドレスのアカウントでログインしていない場合、リダイレクトが正しく動作しない可能性があります
 - 一部の特殊な Google サービスでは動作しない場合があります
+- URL に既にアカウント指定がある場合（`authuser`パラメータまたは`/u/{number}/`パス）、拡張機能は競合を避けるため処理をスキップします
 
 ## 🐛 トラブルシューティング
 
