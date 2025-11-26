@@ -155,6 +155,24 @@ function buildMeetRedirectUrl(
 }
 
 /**
+ * Google NotebookLM用のリダイレクトURL生成
+ */
+function buildNotebookLMRedirectUrl(
+  originalUrl: string,
+  accountEmail: string
+): string {
+  try {
+    const url = new URL(originalUrl);
+    url.searchParams.delete("authuser");
+    url.searchParams.set("authuser", accountEmail);
+    return url.toString();
+  } catch (e) {
+    console.error("Invalid URL:", originalUrl, e);
+    return originalUrl;
+  }
+}
+
+/**
  * サポート対象のサービス一覧
  */
 export const SUPPORTED_SERVICES: ServiceDefinition[] = [
@@ -213,6 +231,13 @@ export const SUPPORTED_SERVICES: ServiceDefinition[] = [
     displayName: "Google Meet",
     hostPattern: "meet.google.com",
     buildRedirectUrl: buildMeetRedirectUrl,
+  },
+  {
+    id: "notebooklm",
+    name: "notebooklm",
+    displayName: "Google NotebookLM",
+    hostPattern: "notebooklm.google.com",
+    buildRedirectUrl: buildNotebookLMRedirectUrl,
   },
 ];
 

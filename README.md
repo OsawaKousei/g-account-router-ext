@@ -17,6 +17,7 @@ Google サービス(Gmail、YouTube 等)へのアクセス時に、あらかじ�
   - Google Gemini
   - Google Docs
   - Google Meet
+  - Google NotebookLM
 - **サービス固有の処理**: 各サービスに最適化されたリダイレクト処理
 - **ルールの有効/無効切り替え**: 必要に応じてルールを一時的に無効化可能
 - **軽量**: シンプルで高速な動作

@@ -5,7 +5,7 @@ node_modules/
 .vscode/
 
 # build output
-dist/
+dist*/
 *zip
 
 # development files

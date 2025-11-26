@@ -17,6 +17,7 @@ A browser extension that automatically switches to a specified Google account wh
   - Google Gemini
   - Google Docs
   - Google Meet
+  - Google NotebookLM
 - **Service-Specific Processing**: Optimized redirect handling for each service
 - **Enable/Disable Rules**: Temporarily disable rules as needed
 - **Lightweight**: Simple and fast operation
